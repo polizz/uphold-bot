@@ -10,20 +10,20 @@
 2. `npm install`
 
 # Usage
-`$ node run dev` 
+`$ npm run dev` 
 
 or
 
-`$ node run start`
+`$ npm run start`
 
 # Arguments
 You can also override the default 5 second refresh interval by providing an override argument:
 
 6 second refresh: 
-`$ node run dev -- --interval 6000`
+`$ npm run dev -- --interval 6000`
 
 You can monitor other BTC pairs with:
-`$ node run dev -- --pair 'AAPL-BTC ADBE-BTC AMD-BTC'`
+`$ npm run dev -- --pairs 'AAPL-BTC ADBE-BTC AMD-BTC'`
 
 You can alert on different percentage above/below start with:
-`$ node run dev -- --threshold 0.0000001`
+`$ npm run dev -- --threshold 0.0000001`
