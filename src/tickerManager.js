@@ -4,24 +4,37 @@ import { calcDelta, flagDeviation } from './pricing/deltaCalculator'
 
 const store = {}
 
-const extractPrice = (symbol, cache) => async (prices) => {
-  const symbolPrice = (await prices)
-    .find(i => i.pair === symbol)?.bid || 0
+const extractPrices = (symbols, cache) => async (prices) => {
+  const awaitedPrices = await prices
+  const newSymbolPrices = symbols.map(sym => {
+    return [
+      sym,
+      cache[sym],
+      Number.parseFloat(awaitedPrices.find(i => i.pair === sym)?.bid || 0),
+    ]
+  })
 
-  return [
-    cache[symbol],
-    Number.parseFloat(await symbolPrice),
-  ]
+  return newSymbolPrices
 }
 
-const addTicker = async (symbol, threshold, interval, logCallback) => {
-  const extractor = extractPrice(symbol, store)
-
+const setInitialPrices = async (symbols, store) => {
   try {
-    store[symbol] = (await extractor(getPrices()))[1]
+    const initialPrices = await getPrices()
+
+    symbols.forEach(sym => {
+      store[sym] = Number.parseFloat(
+        initialPrices.find(i => i.pair === sym)?.bid || 0
+      )
+    })
+
   } catch {
     throw new Error('Could not fetch initial currency data')
   }
+}
+
+const addTicker = async (symbols, threshold, interval, logCallback) => {
+  const extractor = extractPrices(symbols, store)
+  await setInitialPrices(symbols, store)
 
   const tickerFlow = flow(
     getPrices,
@@ -36,5 +49,6 @@ const addTicker = async (symbol, threshold, interval, logCallback) => {
 
 export default addTicker
 export {
-  extractPrice,
+  extractPrices,
+  setInitialPrices,
 }

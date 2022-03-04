@@ -8,6 +8,8 @@ const parseArgumentsIntoOptions = (rawArgs) => {
      '-i': '--interval',
      '--threshold': Number,
      '-t': '--threshold',
+     '--pairs': String,
+     '-p': '--pairs',
    },
    {
      argv: rawArgs.slice(2),
@@ -16,12 +18,13 @@ const parseArgumentsIntoOptions = (rawArgs) => {
  return {
    interval: args['--interval'] || 5000,
    threshold: args['--threshold'] || 0.01,
+   pairs: args['--pairs'] || 'BTCUSD',
  }
 }
 
 const cli = (args) => {
  let options = parseArgumentsIntoOptions(args)
- console.log(options)
+ console.warn(options)
 
  main(options)
 }

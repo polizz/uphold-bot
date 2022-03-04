@@ -1,19 +1,28 @@
 const calcDelta = async (prices) => {
-  const [originalPrice, newPrice] = await prices
-  
-  return 1 - (originalPrice / newPrice)
+  const allPrices = await prices
+
+  const deltas = allPrices.map(([symbol, originalPrice, newPrice]) => {
+    return [symbol, 1 - (originalPrice / newPrice)]
+  })
+
+  return deltas
 }
 
-const flagDeviation = threshold => async (deviation) => {
-  const measure = await deviation
-  const neg = measure < 0
-  const absMeasure = Math.abs(measure)
+const flagDeviation = threshold => async (deviations) => {
+  const measures = await deviations
 
-  if (absMeasure > threshold) {
-    return [true, neg, absMeasure] 
-  }
+  const updates = measures.map(([symbol, measure]) => {
+    const neg = measure < 0
+    const absMeasure = Math.abs(measure)
+  
+    if (absMeasure > threshold) {
+      return [symbol, true, neg, absMeasure] 
+    }
+  
+    return [symbol, false, neg, absMeasure]
+  })
 
-  return [false, neg, absMeasure]
+  return updates
 }
 
 export {
